@@ -2,23 +2,38 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "trusty64"
-  config.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
-  config.vm.network :forwarded_port, guest: 80, host: 8080, auto_correct: true
-  config.vm.network :forwarded_port, guest: 22, host: 6174
-  config.vm.network :forwarded_port, guest: 8000, host: 8000, auto_correct:
-true
-  config.vm.network :forwarded_port, guest: 27017, host: 27017, auto_correct:
-true
-  config.vm.network :forwarded_port, guest: 1337, host: 1337, auto_correct:
-true
-  config.vm.synced_folder "api", "/home/vagrant/api"
-  config.vm.synced_folder "web", "/home/vagrant/web"
-  config.vm.synced_folder "scripts", "/home/vagrant/scripts"
-  config.vm.provision :shell, :path => "scripts/vagrant_setup.sh"
-  config.ssh.forward_agent = true
 
-  config.vm.provider "virtualbox" do |vb|
-    vb.customize ["modifyvm", :id, "--memory", "2048"]
+  config.vm.define "shell", primary: true do |shell|
+    shell.vm.box_url = "https://cloud-images.ubuntu.com/vagrant/vivid/current/vivid-server-cloudimg-amd64-vagrant-disk1.box"
+    shell.vm.box = "ubuntu/vivid64"
+
+    shell.ssh.forward_agent = true
+
+    shell.vm.network "private_network", ip: "192.168.2.3"
+
+    shell.vm.provision :shell, :path => "scripts/shell_setup.sh"
+
+    shell.vm.synced_folder ".", "/vagrant",
+        owner: "vagrant",
+        group: "root",
+        mount_options: ["dmode=1710"]
+
+    shell.vm.provider "virtualbox" do |vb|
+        vb.customize ["modifyvm", :id, "--memory", "3072"]
+    end
+  end
+
+  config.vm.define "web", primary: true do |web|
+    web.vm.box_url = "https://cloud-images.ubuntu.com/vagrant/vivid/current/vivid-server-cloudimg-amd64-vagrant-disk1.box"
+    web.vm.box = "ubuntu/vivid64"
+
+    web.vm.network "private_network", ip: "192.168.2.2"
+
+    web.vm.provision :shell, :path => "scripts/web_setup.sh"
+    web.ssh.forward_agent = true
+
+    web.vm.provider "virtualbox" do |vb|
+        vb.customize ["modifyvm", :id, "--memory", "2048"]
+    end
   end
 end

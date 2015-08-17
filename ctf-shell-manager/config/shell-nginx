@@ -1,0 +1,15 @@
+server {
+      listen 80;
+      server_name _;
+      root   /usr/share/nginx/html;
+
+      location / {
+          types        { }
+          default_type application/octet-stream;
+      }
+
+      location /shell {
+          # make sure this port is consistent with shellinabox.conf
+          proxy_pass http://localhost:4242;
+      }
+}
