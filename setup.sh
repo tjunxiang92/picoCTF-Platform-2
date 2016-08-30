@@ -33,7 +33,8 @@ cd /home/vagrant/api
 ./run_tests.sh
 
 echo "Updating Puzzles"
-./setup.sh
+update_puzzles.sh
 
 echo "Setup Complete"
 echo "Please update IP in /home/vagrant/api/api/config.py api.app.session_cookie_domain"
+echo "nano /home/vagrant/api/api/config.py"
