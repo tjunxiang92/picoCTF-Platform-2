@@ -17,16 +17,23 @@ mkdir -p /srv/http/ctf
 /home/vagrant/scripts/vagrant_setup.sh
 
 # Add Path Variable
+echo "Setting Path Variable"
 export PATH=$PATH:/home/vagrant/scripts
 source /etc/profile
 
 # Reset Pymonogo
-pip3 uninstall bson
-pip3 uninstall pymongo
+echo "Reinstalling pymongo"
+pip3 uninstall -y bson
+pip3 uninstall -y pymongo
 pip3 install pymongo==2.7.1
 
 # Run User tests
-../api/run_tests.sh
+echo "Running User Tests"
+cd /home/vagrant/api
+./run_tests.sh
+
+echo "Updating Puzzles"
+./setup.sh
 
 echo "Setup Complete"
 echo "Please update IP in /home/vagrant/api/api/config.py api.app.session_cookie_domain"
